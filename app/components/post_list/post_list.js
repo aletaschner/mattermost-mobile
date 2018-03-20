@@ -8,11 +8,12 @@ import {
     InteractionManager,
     Platform,
     StyleSheet,
+    Text,
 } from 'react-native';
 
 import ChannelIntro from 'app/components/channel_intro';
 import Post from 'app/components/post';
-import {DATE_LINE, START_OF_NEW_MESSAGES} from 'app/selectors/post_list';
+import {DATE_LINE, START_OF_NEW_MESSAGES, DELTED_ROOT_POST} from 'app/selectors/post_list';
 import mattermostManaged from 'app/mattermost_managed';
 import {makeExtraData} from 'app/utils/list_view';
 import {changeOpacity} from 'app/utils/theme';
@@ -260,6 +261,10 @@ export default class PostList extends PureComponent {
         } else if (item.indexOf(DATE_LINE) === 0) {
             const date = item.substring(DATE_LINE.length);
             return this.renderDateHeader(new Date(date), index);
+        } else if (item === DELTED_ROOT_POST) {
+            return (
+                <Text>Part of this thread has been deleted due to a data retention policy. You can no longer reply to this thread.</Text>
+            );
         }
 
         const postId = item;

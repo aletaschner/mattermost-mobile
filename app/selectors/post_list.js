@@ -10,6 +10,7 @@ import {shouldFilterJoinLeavePost} from 'mattermost-redux/utils/post_utils';
 
 export const DATE_LINE = 'date-';
 export const START_OF_NEW_MESSAGES = 'start-of-new-messages';
+export const DELTED_ROOT_POST = 'deleted-root-post';
 
 function shouldShowJoinLeaveMessages(state) {
     // This setting is true or not set if join/leave messages are to be displayed
@@ -37,6 +38,9 @@ export function makePreparePostIdsForPostList() {
 
             let lastDate = null;
             let addedNewMessagesIndicator = false;
+            let deletedRootIndicator = null;
+            const rootId = posts[0].root_id;
+            const hasRootPost = posts.map((post) => post.id).includes(rootId);
 
             // Iterating through the posts from oldest to newest
             for (let i = posts.length - 1; i >= 0; i--) {
@@ -58,6 +62,11 @@ export function makePreparePostIdsForPostList() {
                     out.push(DATE_LINE + postDate.toString());
 
                     lastDate = postDate;
+                }
+
+                if (!deletedRootIndicator && !hasRootPost) {
+                    deletedRootIndicator = true;
+                    out.push(DELTED_ROOT_POST);
                 }
 
                 // Only add the new messages line if a lastViewedAt time is set
